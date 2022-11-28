@@ -1,0 +1,26 @@
+@HOST = {{$dotenv SERVER_URL}}/user/
+###
+GET {{HOST}}read?page=1&limit=5
+###
+GET {{HOST}}read/6367c6e57453d12450bc04f8
+###
+POST {{HOST}}create
+Content-Type: application/json
+
+{
+    "name": "asdaSdas", 
+    "username": "moo 12naroh", 
+    "email": "moonarohgmail.com", 
+    "password": "12345678", 
+    "passwordConfirmation": "12345678", 
+    "role": "usr"
+}
+###
+PUT {{HOST}}update/6367c51f7453d12450bc04e6
+Content-Type: application/json
+
+{
+    "role": "root"
+}
+###
+DELETE {{HOST}}delete/638422ca48e214ef33c8429f
