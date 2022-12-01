@@ -6,6 +6,7 @@ exports.readUsers = (User) => async (req, res) => {
       {},
       {
         _id: "$_id",
+        image: "$image",
         name: "$name",
         username: "$username",
         email: "$email",
@@ -41,6 +42,7 @@ exports.readUserById = (User) => async (req, res) => {
     const { id } = req.params;
     const user = await User.findById(id, {
       _id: "$_id",
+      image: "$image",
       name: "$name",
       username: "$username",
       email: "$email",
@@ -77,6 +79,7 @@ exports.searchUser = (User) => async (req, res) => {
       },
       {
         _id: "$_id",
+        image: "$image",
         name: "$name",
         username: "$username",
         email: "$email",
@@ -103,9 +106,11 @@ exports.searchUser = (User) => async (req, res) => {
 // create method
 exports.createUser = (User, hashPwd) => async (req, res) => {
   try {
+    const { file } = req;
     const { name, username, email, password, role } = req.body;
     const hashedPwd = await hashPwd(password);
     const created_user = await User.collection.insertOne({
+      image: file?.path,
       name,
       email,
       username,
@@ -130,9 +135,11 @@ exports.loginUser = (User, comparePwd) => async (req, res) => {};
 // register method
 exports.registerUser = (User, hashPwd) => async (req, res) => {
   try {
+    const { file } = req;
     const { name, username, email, password } = req.body;
     const hashedPwd = await hashPwd(password);
     const registered_user = await User.collection.insertOne({
+      image: file?.path,
       name,
       email,
       username,
@@ -156,16 +163,14 @@ exports.updateUser = (User) => async (req, res) => {
   try {
     const { id } = req.params;
     const { role } = req.body;
-    const updated_user = await User.UpdateOne({ _id: id }, { role });
+    const user = await User.findById(id, { role: "$role" });
 
-    if (updated_user.matchedtotal === 0)
+    if (user === null)
       return res.status(404).json({
         message: "User not found!",
       });
-    if (updated_user.modifiedtotal === 0)
-      return res.status(400).json({
-        message: "User still same!",
-      });
+
+    const updated_user = await User.updateOne({ _id: id }, { role });
 
     res.status(200).json({
       message: "User updated!",
@@ -179,27 +184,32 @@ exports.updateUser = (User) => async (req, res) => {
 };
 
 // setting method
-exports.profileUser = (User) => async (req, res) => {
+exports.profileUser = (User, hashPwd, removeImg, path) => async (req, res) => {
   try {
+    const { file } = req;
     const { id } = req.params;
     const { name, username, email, password } = req.body;
-    const hashedPwd = await hashPwd(password);
-    const profiled_user = await User.UpdateOne(
-      { _id: id },
-      { name, email, username, password: hashedPwd }
-    );
+    const user = await User.findById(id, { image: "$image" });
 
-    if (profiled_user.matchedtotal === 0)
+    if (user === null)
       return res.status(404).json({
         message: "User not found!",
       });
-    if (profiled_user.modifiedtotal === 0)
-      return res.status(400).json({
-        message: "User still same!",
-      });
+
+    await removeImg(user?.image, path);
+    const profiled_user = await User.updateOne(
+      { _id: id },
+      {
+        image: file?.path,
+        name,
+        email,
+        username,
+        password: await hashPwd(password),
+      }
+    );
 
     res.status(200).json({
-      message: "User updated!",
+      message: "User profiled!",
       profiled_user,
     });
   } catch (err) {
@@ -210,15 +220,18 @@ exports.profileUser = (User) => async (req, res) => {
 };
 
 // delete method
-exports.deleteUser = (User) => async (req, res) => {
+exports.deleteUser = (User, removeImg, path) => async (req, res) => {
   try {
     const { id } = req.params;
-    const deleted_user = await User.deleteOne({ _id: id });
+    const user = await User.findById(id, { image: "$image" });
 
-    if (deleted_user.deletedCount === 0)
+    if (user === null)
       return res.status(404).json({
         message: "User not found!",
       });
+
+    await removeImg(user?.image, path);
+    const deleted_user = await User.deleteOne({ _id: id });
 
     res.status(200).json({
       message: "User deleted!",

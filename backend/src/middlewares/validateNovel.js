@@ -1,6 +1,6 @@
 // import
 const {
-  checkImage,
+  checkPath,
   checkTitle,
   checkGendre,
   checkContent,
@@ -10,54 +10,64 @@ const {
 } = require("../utils/checkNovel");
 
 // validate create
-exports.validateCreate = (Novel) => (req, res, next) => {
+exports.validateCreate = (Novel, removeImg, path) => async (req, res, next) => {
   const value = {};
-  const { path } = req.file;
+  const { file } = req;
   const { title, gendre, content } = req.body;
 
   // sementara
   const author = { uid: "usr001", username: "remitokun" };
 
-  checkImage(value, path);
+  checkPath(value, file?.path);
   checkTitle(value, title);
   checkGendre(value, gendre);
   checkContent(value, content);
   checkAuthor(value, author);
 
-  if (findTitle(Novel, title)) value.findTitle = "Title exist!";
-  if (findContent(Novel, content)) value.findContent = "Content exist!";
+  if (await findTitle(Novel, title)) value.findTitle = "Title exist!";
+  if (await findContent(Novel, content)) value.findContent = "Content exist!";
 
-  if (Object.keys(value) > 0)
+  if (Object.keys(value).length > 0) {
+    await removeImg(file?.path, path);
     return res.status(400).json({
       message: value,
     });
+  }
   next();
 };
 
 // validate update
-exports.validateProfile = (Novel) => (req, res, next) => {
+exports.validateUpdate = (Novel, removeImg, path) => async (req, res, next) => {
   const value = {};
+  const { file } = req;
   const { id } = req.params;
-  const { path } = req.file;
   const { title, gendre, content } = req.body;
 
   // sementara
   const author = { uid: "usr001", username: "remitokun" };
 
-  checkImage(value, path);
+  checkPath(value, file?.path);
   checkTitle(value, title);
   checkGendre(value, gendre);
   checkContent(value, content);
   checkAuthor(value, author);
 
-  if (findTitle(Novel, title) && id !== findTitle(Novel, title)._id)
+  if (
+    (await findTitle(Novel, title)) &&
+    id !== (await findTitle(Novel, title)._id)
+  )
     value.findTitle = "Title exist!";
-  if (findContent(Novel, content) && id !== findContent(Novel, content)._id)
+  if (
+    (await findContent(Novel, content)) &&
+    id !== (await findContent(Novel, content)._id)
+  )
     value.findContent = "Content exist!";
 
-  if (Object.keys(value) > 0)
+  if (Object.keys(value).length > 0) {
+    await removeImg(file?.path, path);
     return res.status(400).json({
       message: value,
     });
+  }
   next();
 };

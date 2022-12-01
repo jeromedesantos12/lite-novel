@@ -5,7 +5,12 @@ module.exports = (mongoose, express, path) => {
   const Novel = require("../models/NovelModel")(mongoose);
   const { pagination } = require("../middlewares/pagination");
   const { convertToArr } = require("../middlewares/convertToArr");
-  const { uploadImg } = require("../middlewares/uploadImg");
+  const { imgNovel } = require("../middlewares/uploadImg");
+  const { removeImg } = require("../utils/removeImg");
+  const {
+    validateCreate,
+    validateUpdate,
+  } = require("../middlewares/validateNovel");
   const {
     readNovels,
     readNovelById,
@@ -19,9 +24,21 @@ module.exports = (mongoose, express, path) => {
   router.get("/read", pagination(Novel), readNovels(Novel));
   router.get("/read/:id", readNovelById(Novel));
   router.get("/search", searchNovel(Novel));
-  router.post("/create", uploadImg, convertToArr, createNovel(Novel));
-  router.put("/update/:id", uploadImg, convertToArr, updateNovel(Novel, path));
-  router.delete("/delete/:id", deleteNovel(Novel, path));
+  router.post(
+    "/create",
+    convertToArr,
+    imgNovel,
+    validateCreate(Novel, removeImg, path),
+    createNovel(Novel)
+  );
+  router.put(
+    "/update/:id",
+    convertToArr,
+    imgNovel,
+    validateUpdate(Novel, removeImg, path),
+    updateNovel(Novel, removeImg, path)
+  );
+  router.delete("/delete/:id", deleteNovel(Novel, removeImg, path));
 
   return router;
 };

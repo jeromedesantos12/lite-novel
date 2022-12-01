@@ -1,5 +1,6 @@
 // import
 const {
+  checkPath,
   checkUser,
   checkName,
   checkUsername,
@@ -11,29 +12,6 @@ const {
   findEmail,
 } = require("../utils/checkUser");
 
-// validate create
-exports.validateCreate = (User) => (req, res, next) => {
-  const value = {};
-  const { name, username, email, password, passwordConfirmation, role } =
-    req.body;
-
-  checkName(value, name);
-  checkUsername(value, username);
-  checkEmail(value, email);
-  checkPassword(value, password);
-  checkPasswordConfirmation(value, password, passwordConfirmation);
-  checkRole(value, role);
-
-  if (findUsername(User, username)) value.findUsername = "Username exist!";
-  if (findEmail(User, email)) value.findEmail = "Email exist!";
-
-  if (Object.keys(value) > 0)
-    return res.status(400).json({
-      message: value,
-    });
-  next();
-};
-
 // validate login
 exports.validateLogin = (req, res, next) => {
   const value = {};
@@ -42,7 +20,7 @@ exports.validateLogin = (req, res, next) => {
   checkUser(value, user);
   checkPassword(value, password);
 
-  if (Object.keys(value) > 0)
+  if (Object.keys(value).length > 0)
     return res.status(400).json({
       message: value,
     });
@@ -50,23 +28,57 @@ exports.validateLogin = (req, res, next) => {
 };
 
 // validate register
-exports.validateRegister = (User) => (req, res, next) => {
-  const value = {};
-  const { name, username, email, password, passwordConfirmation } = req.body;
+exports.validateRegister =
+  (User, removeImg, path) => async (req, res, next) => {
+    const value = {};
+    const { file } = req;
+    const { name, username, email, password, passwordConfirmation } = req.body;
 
+    checkPath(value, file?.path);
+    checkName(value, name);
+    checkUsername(value, username);
+    checkEmail(value, email);
+    checkPassword(value, password);
+    checkPasswordConfirmation(value, password, passwordConfirmation);
+
+    if (await findUsername(User, username))
+      value.findUsername = "Username exist!";
+    if (await findEmail(User, email)) value.findEmail = "Email exist!";
+
+    if (Object.keys(value).length > 0) {
+      await removeImg(file?.path, path);
+      return res.status(400).json({
+        message: value,
+      });
+    }
+    next();
+  };
+
+// validate create
+exports.validateCreate = (User, removeImg, path) => async (req, res, next) => {
+  const value = {};
+  const { file } = req;
+  const { name, username, email, password, passwordConfirmation, role } =
+    req.body;
+
+  checkPath(value, file?.path);
   checkName(value, name);
   checkUsername(value, username);
   checkEmail(value, email);
   checkPassword(value, password);
   checkPasswordConfirmation(value, password, passwordConfirmation);
+  checkRole(value, role);
 
-  if (findUsername(User, username)) value.findUsername = "Username exist!";
-  if (findEmail(User, email)) value.findEmail = "Email exist!";
+  if (await findUsername(User, username))
+    value.findUsername = "Username exist!";
+  if (await findEmail(User, email)) value.findEmail = "Email exist!";
 
-  if (Object.keys(value) > 0)
+  if (Object.keys(value).length > 0) {
+    await removeImg(file?.path, path);
     return res.status(400).json({
       message: value,
     });
+  }
   next();
 };
 
@@ -85,25 +97,35 @@ exports.validateUpdate = (req, res, next) => {
 };
 
 // validate profile
-exports.validateProfile = (User) => (req, res, next) => {
+exports.validateProfile = (User, removeImg, path) => async (req, res, next) => {
   const value = {};
+  const { file } = req;
   const { id } = req.params;
   const { name, username, email, password, passwordConfirmation } = req.body;
 
+  checkPath(value, file?.path);
   checkName(value, name);
   checkUsername(value, username);
   checkEmail(value, email);
   checkPassword(value, password);
   checkPasswordConfirmation(value, password, passwordConfirmation);
 
-  if (findUsername(User, username) && id !== findUsername(User, username)._id)
+  if (
+    (await findUsername(User, username)) &&
+    id !== (await findUsername(User, username)._id)
+  )
     value.findUsername = "Username exits!";
-  if (findEmail(User, email) && id !== findEmail(User, email)._id)
+  if (
+    (await findEmail(User, email)) &&
+    id !== (await findEmail(User, email)._id)
+  )
     value.findEmail = "Email exits!";
 
-  if (Object.keys(value) > 0)
+  if (Object.keys(value).length > 0) {
+    await removeImg(file?.path, path);
     return res.status(400).json({
       message: value,
     });
+  }
   next();
 };

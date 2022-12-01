@@ -2,6 +2,10 @@
 module.exports = (mongoose) => {
   // db schema
   const User = mongoose.Schema({
+    image: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: true,

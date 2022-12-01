@@ -77,10 +77,10 @@ exports.searchNovel = (Novel) => async (req, res) => {
 // create method
 exports.createNovel = (Novel) => async (req, res) => {
   try {
-    const { path } = req.file;
-    const { title, gendre, content, author } = req.body;
+    const { file } = req;
+    const { title, gendre, content } = req.body;
     const created_novel = await Novel.collection.insertOne({
-      image: path,
+      image: file?.path,
       title,
       gendre,
       content,
@@ -99,30 +99,27 @@ exports.createNovel = (Novel) => async (req, res) => {
 };
 
 // update method
-exports.updateNovel = (Novel, modPath) => async (req, res) => {
+exports.updateNovel = (Novel, removeImg, path) => async (req, res) => {
   try {
+    const { file } = req;
     const { id } = req.params;
-    const { path } = req.file;
-    const { removeImg } = require("../utils/removeImg");
-    const { title, gendre, content, author } = req.body;
-
+    const { title, gendre, content } = req.body;
     const novel = await Novel.findById(id, { image: "$image" });
+
     if (novel === null)
       return res.status(404).json({
         message: "Novel not found!",
       });
 
-    await removeImg(novel?.image, modPath);
+    await removeImg(novel?.image, path);
     const updated_novel = await Novel.updateOne(
       { _id: id },
       {
-        $set: {
-          image: path,
-          title,
-          gendre,
-          content,
-          author: { uid: "usr001", username: "remitokun" },
-        },
+        image: file?.path,
+        title,
+        gendre,
+        content,
+        author: { uid: "usr001", username: "remitokun" },
       }
     );
 
@@ -138,18 +135,17 @@ exports.updateNovel = (Novel, modPath) => async (req, res) => {
 };
 
 // delete method
-exports.deleteNovel = (Novel, modPath) => async (req, res) => {
+exports.deleteNovel = (Novel, removeImg, path) => async (req, res) => {
   try {
     const { id } = req.params;
-    const { removeImg } = require("../utils/removeImg");
-
     const novel = await Novel.findById(id, { image: "$image" });
+
     if (novel === null)
       return res.status(404).json({
         message: "Novel not found!",
       });
 
-    await removeImg(novel?.image, modPath);
+    await removeImg(novel?.image, path);
     const deleted_novel = await Novel.deleteOne({ _id: id });
 
     res.status(200).json({

@@ -5,7 +5,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const env = require("dotenv").config();
 const db = require("./src/config/db")(mongoose, env);
-const UserRoute = require("./src/routes/UserRoute")(mongoose, express);
+const UserRoute = require("./src/routes/UserRoute")(mongoose, express, path);
 const NovelRoute = require("./src/routes/NovelRoute")(mongoose, express, path);
 
 // module init

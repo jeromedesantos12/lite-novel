@@ -1,8 +1,8 @@
 // import
 const validator = require("validator");
 
-// image
-exports.checkImage = (value, path) => {
+// path
+exports.checkPath = (value, path) => {
   if (typeof path !== "string") return (value.path = "Path must be string!");
   if (validator.isEmpty(path)) return (value.path = "Path can't be empty!");
 };

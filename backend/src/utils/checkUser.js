@@ -1,10 +1,10 @@
 // import
 const validator = require("validator");
 
-// image
-exports.checkImage = (value, image) => {
-  if (typeof image !== "string") return (value.image = "Image must be string!");
-  if (validator.isEmpty(image)) return (value.image = "Image can't be empty!");
+// path
+exports.checkPath = (value, path) => {
+  if (typeof path !== "string") return (value.path = "Path must be string!");
+  if (validator.isEmpty(path)) return (value.path = "Path can't be empty!");
 };
 
 // user
@@ -79,8 +79,9 @@ exports.checkRole = (value, role) => {
 };
 
 // find username
-exports.findUsername = async (User, username) =>
-  await User.findOne({ username });
+exports.findUsername = async (User, username) => {
+  return await User.findOne({ username });
+};
 
 // find email
 exports.findEmail = async (User, email) => await User.findOne({ email });

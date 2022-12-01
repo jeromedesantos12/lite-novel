@@ -1,10 +1,22 @@
 // import
-const { multerSetup } = require("../utils/multerSetup");
+const { setupNovel, setupUser } = require("../utils/multerSetup");
 
-// export
-exports.uploadImg = async (req, res, next) => {
+// novel
+exports.imgNovel = async (req, res, next) => {
   try {
-    await multerSetup(req, res);
+    await setupNovel(req, res);
+  } catch (err) {
+    return res.status(400).json({
+      message: err.message,
+    });
+  }
+  next();
+};
+
+// user
+exports.imgUser = async (req, res, next) => {
+  try {
+    await setupUser(req, res);
   } catch (err) {
     return res.status(400).json({
       message: err.message,
