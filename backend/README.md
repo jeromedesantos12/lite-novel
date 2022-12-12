@@ -25,5 +25,9 @@ Note untuk option chaining operator:
 - req.body = {}
 - req.query = {}
 - req.params = {} -> pokoknya bawaan dari si express
-
 - req.file = undefined -> jadi pakai req.file?.path
+
+Jadi bug multer!
+
+- multer bikin error route yang tidak pakai middleware multer, misal route post "/create" pakai imgUser (Middleware hasil promise multer) lalu route post "/login" yang tidak pakai imgUser, req body tidak terbaca/ req.body = {} (length 0)
+- Begitu juga tadi entah kenapa req.body tidak terbaca pada saat sebelum upload image multer, jadi pas validasi gagal, hapus image (kerja 2x) harusnya kan validasi gagalin dulu sebelum sampai ke middleware imgUser alias multer

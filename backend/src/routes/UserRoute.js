@@ -4,13 +4,13 @@ module.exports = (mongoose, express, path) => {
   const router = express.Router();
   const User = require("../models/UserModel")(mongoose);
   const { pagination } = require("../middlewares/pagination");
-  const { imgUser } = require("../middlewares/uploadImg");
+  // const { imgUser } = require("../middlewares/uploadImg");
   const { removeImg } = require("../utils/removeImg");
   const { hashPwd, comparePwd } = require("../utils/hashNcompare");
   const {
     validateCreate,
-    validateLogin,
     validateRegister,
+    validateLogin,
     validateUpdate,
     validateProfile,
   } = require("../middlewares/validateUser");
@@ -27,26 +27,28 @@ module.exports = (mongoose, express, path) => {
   } = require("../controllers/UserController");
 
   // route path
+  router.post("/login", validateLogin, loginUser(User, comparePwd));
+  router.put("/update/:id", validateUpdate, updateUser(User));
+
   router.get("/read", pagination(User), readUsers(User));
   router.get("/read/:id", readUserById(User));
   router.get("/search", searchUser(User));
   router.post(
     "/create",
-    imgUser,
+
     validateCreate(User, removeImg, path),
     createUser(User, hashPwd)
   );
-  router.post("/login", validateLogin, loginUser(User, comparePwd));
+
   router.post(
     "/register",
-    imgUser,
+
     validateRegister(User, removeImg, path),
     registerUser(User, hashPwd)
   );
-  router.put("/update/:id", validateUpdate, updateUser(User));
   router.put(
     "/profile/:id",
-    imgUser,
+
     validateProfile(User, removeImg, path),
     profileUser(User, hashPwd, removeImg, path)
   );

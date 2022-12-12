@@ -5,5 +5,5 @@ const bcrypt = require("bcrypt");
 exports.hashPwd = async (password) => await bcrypt.hash(password, 10);
 
 // login user
-exports.comparePwd = async (password, model) =>
-  await bcrypt.compare(password, model.password);
+exports.comparePwd = async (password, hashPassword) =>
+  await bcrypt.compare(password, hashPassword);

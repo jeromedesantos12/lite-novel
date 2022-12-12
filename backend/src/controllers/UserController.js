@@ -130,7 +130,41 @@ exports.createUser = (User, hashPwd) => async (req, res) => {
 };
 
 // login method
-exports.loginUser = (User, comparePwd) => async (req, res) => {};
+exports.loginUser = (User, comparePwd) => async (req, res) => {
+  try {
+    const { user, password } = req.body;
+    const userLog = await User.find({
+      $or: [
+        { username: { $regex: `${user}`, $options: "i" } },
+        { email: { $regex: `${user}`, $options: "i" } },
+      ],
+    });
+
+    // req.body aja udah bocor
+    console.log("Isi Body", req.body);
+    console.log("Isi Login", userLog);
+
+    if (userLog.length === 0)
+      return res.status(404).json({
+        message: "User not found!",
+      });
+
+    // const comparedPwd = await comparePwd(password, userLog?.password);
+
+    // if (comparedPwd === null)
+    //   return res.status(404).json({
+    //     message: "Wrong password!",
+    //   });
+
+    res.status(404).json({
+      message: "Login suceess!",
+    });
+  } catch {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
 
 // register method
 exports.registerUser = (User, hashPwd) => async (req, res) => {
@@ -138,6 +172,7 @@ exports.registerUser = (User, hashPwd) => async (req, res) => {
     const { file } = req;
     const { name, username, email, password } = req.body;
     const hashedPwd = await hashPwd(password);
+
     const registered_user = await User.collection.insertOne({
       image: file?.path,
       name,
