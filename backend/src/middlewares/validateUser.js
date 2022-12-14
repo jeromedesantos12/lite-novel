@@ -14,7 +14,7 @@ const {
 
 // validate login
 exports.validateLogin = (req, res, next) => {
-  console.log("Isi Body Login", req.body);
+  console.log("Isi Body Login | validateUser.js", req.body);
 
   const value = {};
   const { user, password } = req.body;
@@ -32,8 +32,6 @@ exports.validateLogin = (req, res, next) => {
 // validate register
 exports.validateRegister =
   (User, removeImg, path) => async (req, res, next) => {
-    console.log("Isi Body Register", req.body);
-
     const value = {};
     const { file } = req;
     const { name, username, email, password, passwordConfirmation } = req.body;
@@ -88,14 +86,10 @@ exports.validateCreate = (User, removeImg, path) => async (req, res, next) => {
 
 // validate update
 exports.validateUpdate = (req, res, next) => {
-  console.log("Isi Body Update", req.body);
-
   const value = {};
   const { role } = req.body;
 
   checkRole(value, role);
-
-  console.log("value", value);
 
   if (Object.keys(value).length > 0)
     return res.status(400).json({

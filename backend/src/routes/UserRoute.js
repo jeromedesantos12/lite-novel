@@ -4,7 +4,7 @@ module.exports = (mongoose, express, path) => {
   const router = express.Router();
   const User = require("../models/UserModel")(mongoose);
   const { pagination } = require("../middlewares/pagination");
-  // const { imgUser } = require("../middlewares/uploadImg");
+  const { imgUser } = require("../middlewares/uploadImg");
   const { removeImg } = require("../utils/removeImg");
   const { hashPwd, comparePwd } = require("../utils/hashNcompare");
   const {
@@ -35,20 +35,20 @@ module.exports = (mongoose, express, path) => {
   router.get("/search", searchUser(User));
   router.post(
     "/create",
-
+    imgUser,
     validateCreate(User, removeImg, path),
     createUser(User, hashPwd)
   );
 
   router.post(
     "/register",
-
-    validateRegister(User, removeImg, path),
+    imgUser,
+    // validateRegister(User, removeImg, path),
     registerUser(User, hashPwd)
   );
   router.put(
     "/profile/:id",
-
+    imgUser,
     validateProfile(User, removeImg, path),
     profileUser(User, hashPwd, removeImg, path)
   );

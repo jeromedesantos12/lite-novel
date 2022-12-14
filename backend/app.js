@@ -14,6 +14,7 @@ const { PORT, CLIENT_URL } = process.env;
 
 // module setup
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(
   cors({
@@ -28,17 +29,17 @@ app.use("/novel", NovelRoute);
 app.use("/user", UserRoute);
 app.use("*", (req, res) => res.status(404).json({ message: "URL not found!" }));
 
-// // watermark
-// console.clear();
-// console.info(`
-// ░█░░░▀█▀░▀█▀░█▀▀░░░█▀█░█▀█░█░█░█▀▀░█░░
-// ░█░░░░█░░░█░░█▀▀░░░█░█░█░█░▀▄▀░█▀▀░█░░
-// ░▀▀▀░▀▀▀░░▀░░▀▀▀░░░▀░▀░▀▀▀░░▀░░▀▀▀░▀▀▀
-// `);
+// watermark
+console.clear();
+console.info(`
+░█░░░▀█▀░▀█▀░█▀▀░░░█▀█░█▀█░█░█░█▀▀░█░░
+░█░░░░█░░░█░░█▀▀░░░█░█░█░█░▀▄▀░█▀▀░█░░
+░▀▀▀░▀▀▀░░▀░░▀▀▀░░░▀░▀░▀▀▀░░▀░░▀▀▀░▀▀▀
+`);
 
 // run server
 app.listen(PORT, () => console.info(`Server up and running on :${PORT}...`));
 
 // db connect
-db.on("error", (error) => console.error(error));
+db.on("error", (err) => console.error(err));
 db.once("open", () => console.info("Database Connected..."));
