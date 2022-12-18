@@ -1,8 +1,5 @@
 // export
-module.exports = (mongoose, env) => {
-  // import
-  const { DB } = process.env;
-
+module.exports = (mongoose, DB) => {
   // module setup
   mongoose.connect(DB, {
     useNewUrlParser: true,

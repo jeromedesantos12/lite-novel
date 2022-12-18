@@ -14,8 +14,6 @@ const {
 
 // validate login
 exports.validateLogin = (req, res, next) => {
-  console.log("Isi Body Login | validateUser.js", req.body);
-
   const value = {};
   const { user, password } = req.body;
 

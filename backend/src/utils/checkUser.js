@@ -3,18 +3,21 @@ const validator = require("validator");
 
 // path
 exports.checkPath = (value, path) => {
+  if (path === undefined) return (value.path = "Path undefined!");
   if (typeof path !== "string") return (value.path = "Path must be string!");
   if (validator.isEmpty(path)) return (value.path = "Path can't be empty!");
 };
 
 // user
 exports.checkUser = (value, user) => {
+  if (user === undefined) return (value.user = "User undefined!");
   if (typeof user !== "string") return (value.user = "User must be string!");
   if (validator.isEmpty(user)) return (value.user = "User can't be empty!");
 };
 
 // name
 exports.checkName = (value, name) => {
+  if (name === undefined) return (value.name = "Name undefined!");
   if (typeof name !== "string") return (value.name = "Name must be string!");
   if (validator.isEmpty(name)) return (value.name = "Name can't be empty!");
   if (!validator.isAlpha(name, "en-US", { ignore: "-s" }))
@@ -23,6 +26,7 @@ exports.checkName = (value, name) => {
 
 // username
 exports.checkUsername = (value, username) => {
+  if (username === undefined) return (value.username = "Username undefined!");
   if (typeof username !== "string")
     return (value.username = "Username must be string!");
   if (validator.isEmpty(username))
@@ -33,6 +37,7 @@ exports.checkUsername = (value, username) => {
 
 // email
 exports.checkEmail = (value, email) => {
+  if (email === undefined) return (value.email = "Email undefined!");
   if (typeof email !== "string") return (value.email = "Email must be string!");
   if (validator.isEmpty(email)) return (value.email = "Email can't be empty!");
   if (!validator.isEmail(email)) return (value.email = "Email not valid!");
@@ -40,6 +45,7 @@ exports.checkEmail = (value, email) => {
 
 // password
 exports.checkPassword = (value, password) => {
+  if (password === undefined) return (value.password = "Password undefined!");
   if (typeof password !== "string")
     return (value.password = "Password must be string!");
   if (validator.isEmpty(password))
@@ -54,11 +60,13 @@ exports.checkPassword = (value, password) => {
     })
   )
     return (value.password =
-      "Password requirement, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1,");
+      "Password requirement, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1");
 };
 
 // password confirmation
 exports.checkPasswordConfirmation = (value, password, passwordConfirmation) => {
+  if (passwordConfirmation === undefined)
+    return (value.passwordConfirmation = "Password Confirmation undefined!");
   if (typeof passwordConfirmation !== "string")
     return (value.passwordConfirmation =
       "Password Confirmation must be string!");
@@ -72,6 +80,7 @@ exports.checkPasswordConfirmation = (value, password, passwordConfirmation) => {
 
 // role
 exports.checkRole = (value, role) => {
+  if (role === undefined) return (value.role = "Role undefined!");
   if (typeof role !== "string") return (value.role = "Role must be string!");
   if (role === null) return (value.role = "Role can't be empty!");
   if (!["root", "usr"].includes(role))

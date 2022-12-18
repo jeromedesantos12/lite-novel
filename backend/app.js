@@ -1,16 +1,25 @@
 // import
+require("dotenv").config();
 const path = require("path");
 const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
-const env = require("dotenv").config();
-const db = require("./src/config/db")(mongoose, env);
-const UserRoute = require("./src/routes/UserRoute")(mongoose, express, path);
-const NovelRoute = require("./src/routes/NovelRoute")(mongoose, express, path);
-
-// module init
+const cookieParser = require("cookie-parser");
 const app = express();
-const { PORT, CLIENT_URL } = process.env;
+const { PORT, CLIENT_URL, DB, ACCESS_TOKEN_SECRET } = process.env;
+const db = require("./src/config/db")(mongoose, DB);
+const NovelRoute = require("./src/routes/NovelRoute")(
+  mongoose,
+  express,
+  path,
+  ACCESS_TOKEN_SECRET
+);
+const UserRoute = require("./src/routes/UserRoute")(
+  mongoose,
+  express,
+  path,
+  ACCESS_TOKEN_SECRET
+);
 
 // module setup
 app.use(express.json());
@@ -23,6 +32,8 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(cookieParser());
 
 // route path
 app.use("/novel", NovelRoute);

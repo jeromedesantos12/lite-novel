@@ -130,34 +130,48 @@ exports.createUser = (User, hashPwd) => async (req, res) => {
 };
 
 // login method
-exports.loginUser = (User, comparePwd) => async (req, res) => {
-  try {
-    const { user, password } = req.body;
-    const userLog = await User.findOne({
-      $or: [{ username: user }, { email: user }],
-    });
-
-    if (userLog.length === 0)
-      return res.status(404).json({
-        message: "User not found!",
+exports.loginUser =
+  (User, comparePwd, generateAccessToken, ACCESS_TOKEN_SECRET) =>
+  async (req, res) => {
+    try {
+      const { user, password } = req.body;
+      const userLog = await User.findOne({
+        $or: [{ username: user }, { email: user }],
       });
 
-    const comparedPwd = await comparePwd(password, userLog?.password);
+      if (userLog.length === 0)
+        return res.status(404).json({
+          message: "User not found!",
+        });
 
-    if (comparedPwd === false)
-      return res.status(404).json({
-        message: "Wrong password!",
+      const comparedPwd = await comparePwd(password, userLog?.password);
+
+      if (!comparedPwd)
+        return res.status(404).json({
+          message: "Wrong password!",
+        });
+
+      const token = generateAccessToken(
+        userLog._id,
+        userLog.role,
+        ACCESS_TOKEN_SECRET
+      );
+      req.session = null;
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          maxAge: 60 * 1000,
+        })
+        .status(200)
+        .json({
+          message: "Login suceess!",
+        });
+    } catch {
+      res.status(500).json({
+        message: err.message,
       });
-
-    res.status(404).json({
-      message: "Login suceess!",
-    });
-  } catch {
-    res.status(500).json({
-      message: err.message,
-    });
-  }
-};
+    }
+  };
 
 // register method
 exports.registerUser = (User, hashPwd) => async (req, res) => {
