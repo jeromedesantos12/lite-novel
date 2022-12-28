@@ -1,7 +1,7 @@
 // export
-module.exports = (mongoose, DB) => {
+module.exports = (mongoose, DB_URL) => {
   // module setup
-  mongoose.connect(DB, {
+  mongoose.connect(DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });

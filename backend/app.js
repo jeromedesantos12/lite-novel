@@ -1,24 +1,41 @@
 // import
 require("dotenv").config();
-const path = require("path");
+
 const cors = require("cors");
+const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+
 const app = express();
-const { PORT, CLIENT_URL, DB, ACCESS_TOKEN_SECRET } = process.env;
-const db = require("./src/config/db")(mongoose, DB);
+const router = express.Router();
+const { PORT, CLIENT_URL, DB_URL, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } =
+  process.env;
+
+const db = require("./src/config/db")(mongoose, DB_URL);
+const Novel = require("./src/models/NovelModel")(mongoose);
+const User = require("./src/models/UserModel")(mongoose);
+const History = require("./src/models/HistoryModel")(mongoose);
+
 const NovelRoute = require("./src/routes/NovelRoute")(
-  mongoose,
-  express,
+  Novel,
+  router,
   path,
   ACCESS_TOKEN_SECRET
 );
 const UserRoute = require("./src/routes/UserRoute")(
-  mongoose,
-  express,
+  User,
+  router,
   path,
   ACCESS_TOKEN_SECRET
+);
+const AuthRoute = require("./src/routes/AuthRoute")(
+  User,
+  History,
+  router,
+  path,
+  ACCESS_TOKEN_SECRET,
+  REFRESH_TOKEN_SECRET
 );
 
 // module setup
@@ -33,11 +50,13 @@ app.use(
   })
 );
 
+// cookie setup
 app.use(cookieParser());
 
 // route path
 app.use("/novel", NovelRoute);
 app.use("/user", UserRoute);
+app.use("/auth", AuthRoute);
 app.use("*", (req, res) => res.status(404).json({ message: "URL not found!" }));
 
 // watermark

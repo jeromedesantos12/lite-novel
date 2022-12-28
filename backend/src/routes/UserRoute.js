@@ -1,20 +1,13 @@
 // export
-module.exports = (mongoose, express, path, ACCESS_TOKEN_SECRET) => {
+module.exports = (User, router, path, ACCESS_TOKEN_SECRET) => {
   // import
-  const router = express.Router();
-  const User = require("../models/UserModel")(mongoose);
   const { pagination } = require("../middlewares/pagination");
   const { imgUser } = require("../middlewares/uploadImg");
   const { removeImg } = require("../utils/removeImg");
-  const { hashPwd, comparePwd } = require("../utils/hashNcompare");
-  const {
-    verifyAccessToken,
-    generateAccessToken,
-  } = require("../middlewares/verifyNgenerate");
+  const { hashPwd } = require("../utils/hashNcompare");
+  const { verifyAccessToken } = require("../middlewares/verifyNgenerate");
   const {
     validateCreate,
-    validateRegister,
-    validateLogin,
     validateUpdate,
     validateProfile,
   } = require("../middlewares/validateUser");
@@ -23,25 +16,13 @@ module.exports = (mongoose, express, path, ACCESS_TOKEN_SECRET) => {
     readUserById,
     searchUser,
     createUser,
-    loginUser,
-    registerUser,
+
     updateUser,
     profileUser,
     deleteUser,
   } = require("../controllers/UserController");
 
   // route path
-  router.post(
-    "/login",
-    validateLogin,
-    loginUser(User, comparePwd, generateAccessToken, ACCESS_TOKEN_SECRET)
-  );
-  router.post(
-    "/register",
-    imgUser,
-    validateRegister(User, removeImg, path),
-    registerUser(User, hashPwd)
-  );
   router.get(
     "/read",
     verifyAccessToken(ACCESS_TOKEN_SECRET),

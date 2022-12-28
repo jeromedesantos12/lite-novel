@@ -24,7 +24,8 @@ Note untuk option chaining operator:
 
 - req.body = {}
 - req.query = {}
-- req.params = {} -> pokoknya bawaan dari si express
+- req.params = {}
+- req.cookies = {} -> pokoknya bawaan dari si express
 - req.file = undefined -> jadi pakai req.file?.path
 
 Jadi bug multer!

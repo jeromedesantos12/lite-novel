@@ -1,8 +1,6 @@
 // export
-module.exports = (mongoose, express, path, ACCESS_TOKEN_SECRET) => {
+module.exports = (Novel, router, path, ACCESS_TOKEN_SECRET) => {
   // import
-  const router = express.Router();
-  const Novel = require("../models/NovelModel")(mongoose);
   const { pagination } = require("../middlewares/pagination");
   const { convertToArr } = require("../middlewares/convertToArr");
   const { imgNovel } = require("../middlewares/uploadImg");

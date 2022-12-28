@@ -1,6 +1,6 @@
 // import
+const { checkPath } = require("../utils/checkPath");
 const {
-  checkPath,
   checkTitle,
   checkGendre,
   checkContent,

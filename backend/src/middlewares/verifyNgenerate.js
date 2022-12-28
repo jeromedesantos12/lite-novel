@@ -1,19 +1,19 @@
 // import
 const jwt = require("jsonwebtoken");
+const jwtDecode = require("jwt-decode");
 
 // verify jwt on blocked route
-exports.verifyAccessToken = (ACCESS_TOKEN_SECRET) => (req, res, next) => {
+exports.verifyAccessToken = (key) => (req, res, next) => {
   try {
-    const accessToken = req.cookies.token;
+    const { accessToken } = req.cookies;
     if (!accessToken) {
       return res.status(401).json({
         message: "User not authorize!",
       });
     }
-    const user = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
+    const user = jwt.verify(accessToken, key);
     req.user = user;
   } catch (err) {
-    console.log(err);
     if (
       [
         "invalid token",
@@ -39,8 +39,14 @@ exports.verifyAccessToken = (ACCESS_TOKEN_SECRET) => (req, res, next) => {
 };
 
 // generate jwt on login
-exports.generateAccessToken = (id, role, ACCESS_TOKEN_SECRET) => {
-  return jwt.sign({ id, role }, ACCESS_TOKEN_SECRET, {
-    expiresIn: "1m",
+exports.generateAccessToken = (id, role, key) =>
+  jwt.sign({ id, role }, key, {
+    expiresIn: "1h",
   });
-};
+
+exports.generateRefreshToken = (id, role, key) =>
+  jwt.sign({ id, role }, key, {
+    expiresIn: "1d",
+  });
+
+exports.decodeToken = (token) => jwtDecode(token);
