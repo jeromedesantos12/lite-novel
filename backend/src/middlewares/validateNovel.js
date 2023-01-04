@@ -12,17 +12,14 @@ const {
 // validate create
 exports.validateCreate = (Novel, removeImg, path) => async (req, res, next) => {
   const value = {};
-  const { file } = req;
+  const { file, user } = req;
   const { title, gendre, content } = req.body;
-
-  // sementara
-  const author = { uid: "usr001", username: "remitokun" };
 
   checkPath(value, file?.path);
   checkTitle(value, title);
   checkGendre(value, gendre);
   checkContent(value, content);
-  checkAuthor(value, author);
+  checkAuthor(value, user?.id);
 
   if (await findTitle(Novel, title)) value.findTitle = "Title exist!";
   if (await findContent(Novel, content)) value.findContent = "Content exist!";

@@ -77,14 +77,14 @@ exports.searchNovel = (Novel) => async (req, res) => {
 // create method
 exports.createNovel = (Novel) => async (req, res) => {
   try {
-    const { file } = req;
+    const { file, user } = req;
     const { title, gendre, content } = req.body;
     const created_novel = await Novel.collection.insertOne({
       image: file?.path,
       title,
       gendre,
       content,
-      author: { uid: "usr001", username: "remitokun" },
+      author: user?.id,
     });
 
     res.status(201).json({

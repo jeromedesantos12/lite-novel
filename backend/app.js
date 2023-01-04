@@ -61,11 +61,6 @@ app.use("*", (req, res) => res.status(404).json({ message: "URL not found!" }));
 
 // watermark
 console.clear();
-console.info(`
-░█░░░▀█▀░▀█▀░█▀▀░░░█▀█░█▀█░█░█░█▀▀░█░░
-░█░░░░█░░░█░░█▀▀░░░█░█░█░█░▀▄▀░█▀▀░█░░
-░▀▀▀░▀▀▀░░▀░░▀▀▀░░░▀░▀░▀▀▀░░▀░░▀▀▀░▀▀▀
-`);
 
 // run server
 app.listen(PORT, () => console.info(`Server up and running on :${PORT}...`));

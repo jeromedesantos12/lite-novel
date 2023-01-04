@@ -36,19 +36,10 @@ exports.checkContent = (value, content) => {
 // author
 exports.checkAuthor = (value, author) => {
   if (author === undefined) return (value.author = "Author undefined!");
-  if (typeof author !== "object")
-    return (value.author = "Author must be object!");
-  if (Object.keys(author) === 0)
+  if (typeof author !== "string")
+    return (value.author = "Author must be string!");
+  if (validator.isEmpty(author))
     return (value.author = "Author can't be empty");
-
-  if (author.uid === undefined) return (value.author = "Uid undefined!");
-  if (validator.isEmpty(author.uid))
-    return (value.author = "Uid can't be empty!");
-
-  if (author.username === undefined)
-    return (value.author = "Username undefined!");
-  if (validator.isEmpty(author.username))
-    return (value.author = "Username can't be empty!");
 };
 
 // find title

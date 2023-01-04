@@ -16,7 +16,6 @@ module.exports = (User, router, path, ACCESS_TOKEN_SECRET) => {
     readUserById,
     searchUser,
     createUser,
-
     updateUser,
     profileUser,
     deleteUser,

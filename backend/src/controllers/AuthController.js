@@ -90,15 +90,12 @@ exports.loginUser =
     }
   };
 
-exports.logoutUser = (History, decodeToken) => async (req, res) => {
+exports.logoutUser = (History) => async (req, res) => {
   try {
-    // req.session = null
-    const { accessToken } = req.cookies;
-    const decodedAccessToken = decodeToken(accessToken);
+    const { user } = req;
 
-    const deleted_log = await History.deleteOne({
-      uid: decodedAccessToken?.id,
-    });
+    // req.session = null
+    const deleted_log = await History.deleteOne({ uid: user?.id });
 
     res.clearCookie("accessToken").status(200).json({
       message: "Logout suceess!",

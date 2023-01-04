@@ -20,7 +20,7 @@ module.exports = (mongoose) => {
         required: true,
       },
       author: {
-        type: Object,
+        type: String,
         require: true,
       },
     },

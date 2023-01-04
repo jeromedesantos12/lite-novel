@@ -12,9 +12,9 @@ module.exports = (
   const { removeImg } = require("../utils/removeImg");
   const { hashPwd, comparePwd } = require("../utils/hashNcompare");
   const {
+    verifyAccessToken,
     generateAccessToken,
     generateRefreshToken,
-    decodeToken,
   } = require("../middlewares/verifyNgenerate");
   const {
     validateRegister,
@@ -46,7 +46,11 @@ module.exports = (
       REFRESH_TOKEN_SECRET
     )
   );
-  router.delete("/logout", logoutUser(History, decodeToken));
+  router.delete(
+    "/logout",
+    verifyAccessToken(ACCESS_TOKEN_SECRET),
+    logoutUser(History)
+  );
 
   return router;
 };

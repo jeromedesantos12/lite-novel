@@ -1,8 +1,7 @@
 // import
 const jwt = require("jsonwebtoken");
-const jwtDecode = require("jwt-decode");
 
-// verify jwt on blocked route
+// verify access token on after login
 exports.verifyAccessToken = (key) => (req, res, next) => {
   try {
     const { accessToken } = req.cookies;
@@ -38,15 +37,10 @@ exports.verifyAccessToken = (key) => (req, res, next) => {
   next();
 };
 
-// generate jwt on login
+// generate access token on login
 exports.generateAccessToken = (id, role, key) =>
-  jwt.sign({ id, role }, key, {
-    expiresIn: "1h",
-  });
+  jwt.sign({ id, role }, key, { expiresIn: "5s" });
 
+// generate refresh token on login
 exports.generateRefreshToken = (id, role, key) =>
-  jwt.sign({ id, role }, key, {
-    expiresIn: "1d",
-  });
-
-exports.decodeToken = (token) => jwtDecode(token);
+  jwt.sign({ id, role }, key, { expiresIn: "1h" });

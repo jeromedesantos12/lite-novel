@@ -38,3 +38,26 @@ Jadi masalahnya disini!
 - req body kebaca di raw -> JSON tapi tidak di form data (kecuali ditambahin middleware multer)
 - penambahan "express.urlencoded()" juga cuma buat jalanin x-www-form-url-encoded
 - solusi? buat reactnya dulu
+
+Access token dipakai di:
+
+- before login -> -verify (-AT) -> biar gak login 2x & gak sisain data history RT di db
+- after login -> verify (AT) -> auth biasa aja
+
+Refresh token dipakai di:
+
+- login -> generate (RT) -> buat sekalian save ke db
+- history -> verify (RT) -> buat dapet AT baru setelah verif RT
+
+Ambil info dari user yang login:
+
+- decode buat ambil data -> novel & logout (uid mana yg mau di hapus)
+- ambil dari db(?) -> gak bisa, karena pakai akses dari mana? dari AT juga kan? mau ambil dari db lewat AT juga wkwkwkw
+- mau nyari data berdasarkan apa? ya berdasarkan yang lagi login. yang lagi login siapa? ya yang lagi ninggalin cookies alias AT di dalamnya
+- SALAH, tidak perlu di decode, cukup ambil req?.user saja dari si middleware verifyAccessToken
+
+NEXT!
+
+- Buat -verify before login
+- Rute baru untuk si history table
+- Jika exp maka auto jalanin si rute history buat minta AT lagi(?) tapi kan RT nya harus input dulu(?) atau bisa di auto panggil(?)
